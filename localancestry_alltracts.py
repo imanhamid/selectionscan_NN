@@ -1,5 +1,14 @@
 #! /usr/bin/env python
 
+'''
+Extracts all ancestry tracts for sample of 500 individuals
+from .trees file. Outputs as .csv
+
+Assumes 1 diploid ancestor per source population.
+
+usage: localancestry_alltracts.py /full/path/to/infile.trees
+'''
+
 import msprime, pyslim
 import numpy as np
 import pandas as pd

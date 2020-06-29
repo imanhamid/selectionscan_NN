@@ -1,0 +1,56 @@
+// single-pulse admixture simulation for N=10000
+// user specifies:
+// *timing of selection onset
+// *selection coefficient 
+// *total number of generations
+// *P1 admixture contribution
+// *outfile directory/name
+// usage: slim -d s=s -d mig=m -d tsel=t -d tend=gen -d out='"out"' const-Ne-10000_single-pulse_t-m-s.slim 
+
+initialize() {
+	defineConstant("L", 1e8); // 100Mb chromosome
+	initializeTreeSeq();
+	initializeMutationRate(0);
+	initializeMutationType("m1", 0.5, "f", 0);
+	initializeGenomicElementType("g1", m1, 1.0);
+	initializeGenomicElement(g1, 0, L);
+	initializeRecombinationRate(1e-8); 		// uniform recombination rate
+}
+
+1 {
+	selstart = asInteger(tsel); 			// set timing of selection onset
+	genend = asInteger(tend); 			// set total number of generations
+	sim.rescheduleScriptBlock(s1, start=1*selstart);
+	sim.rescheduleScriptBlock(s2, 1*genend, 1*genend);
+}
+
+//source populations each have 1 diploid individual
+
+1 late() {
+	sim.addSubpop("p1", 1);
+	sim.addSubpop("p2", 1);
+	sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
+	locus = asInteger(L/2); 			// variant at chrom  midpoint
+	p1.genomes.addNewDrawnMutation(m1, locus);
+	
+	sim.addSubpop("p3", 10000);
+	m = asFloat(mig);				// set admixture proportion
+	p3.setMigrationRates(c(p1, p2), c(m, 1-m));
+}
+
+2 late() {
+	p3.setMigrationRates(c(p1, p2), c(0.0, 0.0));
+	p1.setSubpopulationSize(0);
+	p2.setSubpopulationSize(0);
+}
+
+s1 1000 late() {
+	mut = sim.mutationsOfType(m1);
+	mut.setSelectionCoeff(s);			// set selection coefficient
+}
+
+s2 1000 late() {
+	outname = "" + out + ".trees";
+	sim.treeSeqOutput(outname);
+	sim.simulationFinished();
+}
