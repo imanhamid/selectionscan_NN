@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 '''
-Extracts all ancestry tracts for sample of 500 individuals
+Extracts all ancestry tracts for sample of 200 individuals
 from .trees file. Outputs as .csv
 
 Assumes 1 diploid ancestor per source population.
@@ -82,7 +82,7 @@ ts = pyslim.load(infile).simplify()
 sample_high = ts.num_samples
 
 rng = np.random.default_rng()
-samples = rng.choice(range(4, sample_high), size=500, replace=False)
+samples = rng.choice(range(4, sample_high), size=200, replace=False)
 
 #get EdgeTable with ancestry tracts
 #for each ancestral population
