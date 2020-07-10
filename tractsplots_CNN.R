@@ -40,9 +40,9 @@ tracts$start_scaled <- ddply(tracts, .(childID), transform, start_scaled = c(0, 
 #order chromosome by tract length spanning variant
 newchildorder <- tracts %>%
   group_by(childID) %>%
-  summarise(bene_tract = tract_length[start_bp<=bene_locus & end_bp >= bene_locus],
-            bene_anc = ancID[start_bp<=bene_locus & end_bp >= bene_locus],
-            childname = childID[start_bp<=bene_locus & end_bp >= bene_locus])
+  summarise(bene_tract = tract_length[start_bp<=bene_locus & end_bp > bene_locus],
+            bene_anc = ancID[start_bp<=bene_locus & end_bp > bene_locus],
+            childname = childID[start_bp<=bene_locus & end_bp > bene_locus])
 childlevels2 <- newchildorder[order(newchildorder$bene_anc, -newchildorder$bene_tract),"childname"]
 
 tracts$childID <- factor(tracts$childID, levels = childlevels2)
