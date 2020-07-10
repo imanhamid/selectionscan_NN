@@ -5,7 +5,7 @@
 // *total number of generations
 // *P1 admixture contribution
 // *outfile directory/name
-// usage: slim -d s=s -d mig=m -d tsel=t -d tend=gen -d out='"out"' const-Ne-10000_single-pulse_t-m-s.slim 
+// usage: slim -d s=s -d mig=m -d tsel=t -d tend=gen -d pos=pos -d out='"out"' const-Ne-10000_single-pulse_t-m-s.slim 
 
 initialize() {
 	defineConstant("L", 1e8); // 100Mb chromosome
@@ -30,7 +30,7 @@ initialize() {
 	sim.addSubpop("p1", 1);
 	sim.addSubpop("p2", 1);
 	sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
-	locus = asInteger(L/2); 			// variant at chrom  midpoint
+	locus = asInteger(pos); 			// set variant position
 	p1.genomes.addNewDrawnMutation(m1, locus);
 	
 	sim.addSubpop("p3", 10000);
