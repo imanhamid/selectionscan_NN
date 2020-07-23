@@ -1,8 +1,8 @@
 #! /usr/bin/env Rscript
 
-#outputs .png image file for each simulation
+#outputs .png image file and mask for each simulation
 #output image set to 200x200 at 500kb per pixel
-#usage: tractsplots_CNN.R /full/path/to/tracts.csv
+#usage: tractsplots_CNN.R /full/path/to/tracts.txt
 
 suppressMessages(library(tidyverse))
 suppressMessages(library(magrittr))
