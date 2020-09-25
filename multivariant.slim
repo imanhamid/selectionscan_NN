@@ -1,0 +1,89 @@
+initialize() {
+	defineConstant("L", 25e6);
+	initializeTreeSeq();
+	initializeMutationRate(0);
+	initializeMutationType("m1", 0.5, "e", 0.01);
+	initializeGenomicElementType("g1", m1, 1.0);
+	initializeGenomicElement(g1, 0, L-1);
+	initializeRecombinationRate(1e-8);
+}
+
+
+1 late() {
+	len_pixel = asInteger(L/200);
+	num_neutral = sample(7:10, 1);
+	print(num_neutral);
+	pixel_breaks = sort(sample(0:199, num_neutral));
+	print(pixel_breaks);
+	neutral_start = pixel_breaks * len_pixel;
+	
+	breaks=NULL;
+	for(i in 0:(length(neutral_start)-1)) {
+		if(i==0) {
+			if(neutral_start[i] > 0) {
+				breaks=c(breaks, neutral_start[i]-1, len_pixel);
+			} else {
+				breaks=c(breaks, 0, len_pixel);
+			}
+		} else {
+			if (i==(length(neutral_start)-1)) {
+				if(pixel_breaks[i]<199) {
+					breaks=c(breaks, (neutral_start[i]-1)-(neutral_start[i-1]+len_pixel-1), len_pixel, L-(neutral_start[i]+len_pixel-1));
+				} else {
+					breaks=c(breaks, (neutral_start[i])-(neutral_start[i-1]+len_pixel-1), len_pixel, 0);
+				}
+			}
+			else {
+				if(neutral_start[i-1]==0) {
+					breaks=c(breaks, (neutral_start[i]-1)-(neutral_start[i-1]+len_pixel), len_pixel);
+				} else {
+					breaks=c(breaks, (neutral_start[i]-1)-(neutral_start[i-1]+len_pixel-1), len_pixel);
+				}
+			}
+		}
+	}
+	
+	weight_list = c(rep(c(1,0), num_neutral), 1);
+	all_weights = repEach(weight_list, breaks);
+	
+	sim.addSubpop("p1", 1);
+	sim.addSubpop("p2", 1);
+	sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
+	p1_loci = sample(0:(L-1), 500, weights=all_weights);
+	p1.genomes.addNewDrawnMutation(m1, p1_loci);
+	p1_pos = p1.genomes[0].positionsOfMutationsOfType(m1);
+	p1_s = p1.genomes[0].mutationsOfType(m1).selectionCoeff;
+	p2_loci = sample(0:(L-1), 500, weights=all_weights);
+	p2.genomes.addNewDrawnMutation(m1, p2_loci);
+	p2_pos = p2.genomes[0].positionsOfMutationsOfType(m1);
+	p2_s = p2.genomes[0].mutationsOfType(m1).selectionCoeff;
+	
+	lines=NULL;
+	for (i in 0:499) {
+		mutLine = paste(c(p1_pos[i], "\t", p1_s[i], "\t", p2_pos[i], "\t", p2_s[i], "\n"), "");
+		lines= c(lines, mutLine);
+	}
+	file = paste(lines, "");
+	file="p1_pos\tp1_s\tp2_pos\tp2_s\n" + file;
+	
+	outname = "" + out + "_variants.txt";
+	
+	if (!writeFile(outname, file))
+		stop("Error writing file.");
+	
+	sim.addSubpop("p3", 10000);
+	p3.setMigrationRates(c(p1, p2), c(0.5, 0.5));
+}
+
+2 late() {
+	p3.setMigrationRates(c(p1, p2), c(0.0, 0.0));
+	p1.setSubpopulationSize(0);
+	p2.setSubpopulationSize(0);
+}
+
+50 late() {
+	outtrees = "" + out + ".trees";
+	sim.treeSeqOutput(outtrees);
+	
+	sim.simulationFinished();
+}
