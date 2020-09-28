@@ -11,11 +11,11 @@ chrom_length <- 25e6
 new_length <- 200
 
 #get seed number and selection coeff
-pattern <- "^.+/multivariant_seed-(\\d+)_alltracts"
+pattern <- "^.+/multivariant_seed-(\\d+)_"
 pattern_match <- str_match(infile, pattern)
 seed <- pattern_match[,2]
 
-outfile <- paste0(pattern_match[,1], ".png")
+outfile <- paste0(pattern_match[,1], "ancestry.png")
 
 #tracts <- read.table("/Users/iman/Desktop/test_alltracts.txt", header = TRUE)
 tracts <- read.table(infile, header = TRUE)
@@ -46,7 +46,7 @@ dev.off()
 
 #s <- read.table("/Users/iman/Desktop/mut_out.txt", header=TRUE)
 
-s_file <- paste0("multivariant_seed-", seed, "_variants.txt")
+s_file <- paste0(pattern_match[,1], "variants.txt")
 
 s <- read.table(s_file, header=TRUE)
 
@@ -66,7 +66,7 @@ sum_s <- all_labels %>% dplyr::group_by(all_pos) %>% dplyr::summarise(sum=sum(al
 total_pos <- data.frame(seq(1:new_length))
 names(total_pos) <- "pos"
 
-total_pos$sum_s[sum_s$all_pos] <- sum_s$sum
+total_pos[sum_s$all_pos, "sum_s"] <- sum_s$sum
 total_pos$s <- ifelse(is.na(total_pos$sum_s), 0, total_pos$sum_s)
 
 total_pos$cols <- ifelse(total_pos$s==0, 0,
@@ -86,7 +86,7 @@ total_pos$cols <- ifelse(total_pos$s==0, 0,
 mask <- rep(total_pos$cols, times=new_length)
 mask_mat <- t(matrix(mask, new_length, new_length, byrow=T))
 
-png(file=paste0(pattern_match[,1], "_P.png"), width=new_length, height = new_length, type = "cairo")
+png(file=paste0(pattern_match[,1], "ancestry_P.png"), width=new_length, height = new_length, type = "cairo")
 par(mar=c(0, 0, 0, 0))
 image(mask_mat,axes=FALSE, col = grey((0:8)/255))
 dev.off()

@@ -15,31 +15,28 @@ initialize() {
 	print(num_neutral);
 	pixel_breaks = sort(sample(0:199, num_neutral));
 	print(pixel_breaks);
-	neutral_start = pixel_breaks * len_pixel;
 	
 	breaks=NULL;
-	for(i in 0:(length(neutral_start)-1)) {
-		if(i==0) {
-			if(neutral_start[i] > 0) {
-				breaks=c(breaks, neutral_start[i]-1, len_pixel);
+	for (i in 0:(length(pixel_breaks)-1)) {
+		if (pixel_breaks[i] > 0) {
+			if (i>0) {
+				sel_dist = pixel_breaks[i] - pixel_breaks[i-1] - 1;
 			} else {
-				breaks=c(breaks, 0, len_pixel);
+				sel_dist = pixel_breaks[i];
+			}
+			sel_weights = sel_dist * len_pixel;
+			
+			if (i==(length(pixel_breaks)-1)) {
+				breaks = c(breaks, sel_weights, len_pixel);
+				sel_dist = 199 - pixel_breaks[i];
+				sel_weights=sel_dist * len_pixel;
+				breaks = c(breaks, sel_weights);
+			} else {
+				breaks = c(breaks, sel_weights, len_pixel);
 			}
 		} else {
-			if (i==(length(neutral_start)-1)) {
-				if(pixel_breaks[i]<199) {
-					breaks=c(breaks, (neutral_start[i]-1)-(neutral_start[i-1]+len_pixel-1), len_pixel, L-(neutral_start[i]+len_pixel-1));
-				} else {
-					breaks=c(breaks, (neutral_start[i])-(neutral_start[i-1]+len_pixel-1), len_pixel, 0);
-				}
-			}
-			else {
-				if(neutral_start[i-1]==0) {
-					breaks=c(breaks, (neutral_start[i]-1)-(neutral_start[i-1]+len_pixel), len_pixel);
-				} else {
-					breaks=c(breaks, (neutral_start[i]-1)-(neutral_start[i-1]+len_pixel-1), len_pixel);
-				}
-			}
+			sel_weights = 0;
+			breaks = c(breaks, sel_weights, len_pixel);
 		}
 	}
 	
@@ -87,3 +84,4 @@ initialize() {
 	
 	sim.simulationFinished();
 }
+

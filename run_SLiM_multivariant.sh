@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH -p scavenger
 #SBATCH --job-name="multivariant"
-#SBATCH -a 1-10
+#SBATCH -a 1-100
 
 c=$SLURM_ARRAY_TASK_ID
 
-declare -i c100="${c}00"
+declare -i c10="${c}0"
 
-for i in {0..99};
+for i in {0..9};
 do
 
-c_array[$i]=$((c100 - i))
+c_array[$i]=$((c10 - i))
 
 done
 

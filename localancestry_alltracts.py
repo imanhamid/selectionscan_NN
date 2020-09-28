@@ -68,8 +68,14 @@ def getCompleteChildTracts(child_arr1, child_arr2, child):
 			for i in child_arr2:
 				i.append(anc)
 				i.append(child)
-	merged_child = np.concatenate((child_arr1, child_arr2))
-	merged_child = merged_child[np.lexsort((merged_child[:,2], merged_child[:,3],merged_child[:,1], merged_child[:,0]))].astype('int32')
+	try:
+		merged_child = np.concatenate((child_arr1, child_arr2))
+		merged_child = merged_child[np.lexsort((merged_child[:,2], merged_child[:,3],merged_child[:,1], merged_child[:,0]))].astype('int32')
+	except ValueError:
+		if not child_arr1:
+			merged_child=child_arr2
+		elif not child_arr2:
+			merged_child=child_arr1
 	return merged_child
 
 #read in trees file
