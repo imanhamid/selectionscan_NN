@@ -108,6 +108,10 @@ for child in samples:
 #output txt file
 ancestor_map_df = pd.DataFrame(total_tracts, columns = ["start_bp", "end_bp", "ancID", "childID"])
 
+
+#convert to integer
+ancestor_map_df = ancestor_map_df[:].astype("int64")
+
 outname = f"{outfile}_alltracts.txt"
 
 #save to csv file

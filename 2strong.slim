@@ -1,0 +1,59 @@
+initialize() {
+	defineConstant("L", 25e6);
+	initializeTreeSeq();
+	initializeMutationRate(0);
+	initializeMutationType("m1", 0.5, "f", 0.075);
+	initializeGenomicElementType("g1", m1, 1.0);
+	initializeGenomicElement(g1, 0, L-1);
+	initializeRecombinationRate(1e-8);
+}
+
+
+1 late() {
+	num_variants = 2;
+	print(num_variants);
+	
+	sim.addSubpop("p1", 1);
+	sim.addSubpop("p2", 1);
+	sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
+	num1 = asInteger(num_variants/2);
+	half = asInteger(((L-1)/2));
+	p1_loci = sample(0:half, num1);
+	p1.genomes.addNewDrawnMutation(m1, p1_loci);
+	p1_loci = sample(half:(L-1), num_variants-num1);
+	p1.genomes.addNewDrawnMutation(m1, p1_loci);
+	p1_pos = p1.genomes[0].positionsOfMutationsOfType(m1);
+	p1_s = p1.genomes[0].mutationsOfType(m1).selectionCoeff;
+	
+	lines=NULL;
+	for (i in 0:(num_variants-1)) {
+		mutLine = paste(c(p1_pos[i], "\t", p1_s[i], "\n"), "");
+		lines= c(lines, mutLine);
+	}
+	file = paste(lines, "");
+	file="p1_pos\tp1_s\n" + file;
+	
+	outname = "" + out + "_variants.txt";
+	//outname="/Users/iman/Desktop/strong_mut_out.txt";
+	
+	if (!writeFile(outname, file))
+		stop("Error writing file.");
+	
+	sim.addSubpop("p3", 10000);
+	p3.setMigrationRates(c(p1, p2), c(0.5, 0.5));
+}
+
+2 late() {
+	p3.setMigrationRates(c(p1, p2), c(0.0, 0.0));
+	p1.setSubpopulationSize(0);
+	p2.setSubpopulationSize(0);
+}
+
+50 late() {
+	outtrees = "" + out + ".trees";
+	//outtrees = "/Users/iman/Desktop/strong_mut.trees";
+	sim.treeSeqOutput(outtrees);
+	
+	sim.simulationFinished();
+}
+
