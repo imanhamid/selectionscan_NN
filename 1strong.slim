@@ -1,0 +1,40 @@
+initialize() {
+        defineConstant("L", 25e6);
+        initializeTreeSeq();
+        initializeMutationRate(0);
+        initializeMutationType("m1", 0.5, "f", 0.075);
+        initializeGenomicElementType("g1", m1, 1.0);
+        initializeGenomicElement(g1, 0, L-1);
+        initializeRecombinationRate(1e-8);
+}
+
+
+1 late() {
+        sim.addSubpop("p1", 1);
+        sim.addSubpop("p2", 1);
+        sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
+        p1_locus = sample(0:(L-1), 1);
+        p1.genomes.addNewDrawnMutation(m1, p1_locus);
+        p1_pos = p1.genomes[0].positionsOfMutationsOfType(m1);
+        p1_s = p1.genomes[0].mutationsOfType(m1).selectionCoeff;
+        
+        outstring = "_s-" + asString(p1_s) + "_pos-" + asString(p1_pos) + "_";
+        defineConstant("s_pos", outstring);
+        
+        sim.addSubpop("p3", 10000);
+        p3.setMigrationRates(c(p1, p2), c(0.5, 0.5));
+}
+
+2 late() {
+        p3.setMigrationRates(c(p1, p2), c(0.0, 0.0));
+        p1.setSubpopulationSize(0);
+        p2.setSubpopulationSize(0);
+}
+
+50 late() {
+        outtrees = "" + out1 + s_pos + out2 + ".trees";
+        //outtrees = "/Users/iman/Desktop/" + outname + ".trees";
+        sim.treeSeqOutput(outtrees);
+        
+        sim.simulationFinished();
+}
