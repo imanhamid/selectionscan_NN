@@ -4,7 +4,8 @@
 Extracts all ancestry tracts for sample of 200 individuals
 from .trees file. Outputs as .csv
 
-Assumes 1 diploid ancestor per source population.
+Assumes 2 source populations and
+1 diploid ancestor per source population.
 
 usage: localancestry_alltracts.py /full/path/to/infile.trees
 '''
