@@ -60,7 +60,7 @@ Simulation script will output two files
 1. a `.trees` file with the name `{out}_s-{selectioncoeff}_pos-{physicalposition}_seed-{seednum}.trees`. This file will be used to generate ancestry images.
 2. a `variants.txt` file with the name `{out}_seed-{seednum}_variants.txt`. This file contains the physical position and selection strength of each variant in the simulation. The single variant simulations have this information in the filenames, but having this information separate may be helpful for keeping track of the range of selection strengths and physical positions. It is also useful for simulations with two or more selected mutations.
 
-In the simulation script, there are some lines that can be uncommented to include population size changes, three-way admixture, two selected mutations, continuous migration each generation. I haven't tested these completely, so let me know if there are bugs when you incorporating those options.
+In the simulation script, there are some lines that can be uncommented to include population size changes, three-way admixture, two selected mutations, continuous migration each generation. I haven't tested these completely, so let me know if there are bugs when incorporating those options.
 
 B. [run_admixture.sh](./run_admixture.sh) - example job array script to generate 1000 SLiM simulations with the [admixture.slim](./admixture.slim) file.
 
